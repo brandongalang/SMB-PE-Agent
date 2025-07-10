@@ -1,6 +1,6 @@
-# SMB-PE Matcher
+# SMB-PE Agent
 
-A multi-modal AI-powered platform for analyzing small-to-medium businesses (SMBs) and matching them with relevant private equity (PE) funds. The system combines semantic search capabilities with advanced AI analysis to provide comprehensive company evaluation and investment matching.
+An intelligent AI agent system for analyzing small-to-medium businesses (SMBs) and matching them with relevant private equity (PE) funds. Built with Google Gemini 2.0 Flash and PydanticAI, the system provides comprehensive company analysis and intelligent fund matching through semantic search.
 
 ## Features
 
@@ -23,8 +23,8 @@ A multi-modal AI-powered platform for analyzing small-to-medium businesses (SMBs
 
 ```bash
 # Clone repository
-git clone <repository-url>
-cd PE-SMB-Matcher-POC
+git clone https://github.com/brandongalang/SMB-PE-Agent.git
+cd SMB-PE-Agent
 
 # Install dependencies
 pip install -r requirements.txt
@@ -33,7 +33,7 @@ cd ../cli && pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
-# Add your GOOGLE_API_KEY to .env
+# Add your GEMINI_API_KEY to .env
 ```
 
 ### Usage
@@ -149,7 +149,7 @@ Comprehensive SMB analysis including:
 
 ### Environment Variables
 ```env
-GOOGLE_API_KEY=your_gemini_api_key_here  # Required
+GEMINI_API_KEY=your_gemini_api_key_here  # Required
 CHROMA_DB_PATH=.chroma_pe_funds         # Optional: ChromaDB storage location
 DATABASE_URL=sec_adv_synthetic.db       # Optional: SQLite database path
 ```
@@ -199,9 +199,9 @@ DATABASE_URL=sec_adv_synthetic.db       # Optional: SQLite database path
 ├── enhanced_fund_matcher.py # Combined matching over multiple data sources
 ├── pe_fund_matcher.py     # Matching algorithms
 ├── data_models.py         # Shared data structures
-├── sec_adv_synthetic.db   # PE fund database
-├── adv_database.db       # SEC Form ADV database (~349K firms)
-└── CLAUDE.md             # Development instructions
+├── sec_adv_synthetic.db   # PE fund database (excluded from repo)
+├── adv_database.db       # SEC Form ADV database (~349K firms, excluded from repo)
+└── .env.example          # Environment configuration template
 ```
 
 ### Testing
@@ -227,7 +227,7 @@ PYTHONPATH=. python3 cli/main.py https://example.com --no-llm-analysis
 **API Server Won't Start**
 ```bash
 export PYTHONPATH=.
-export GOOGLE_API_KEY=your_key_here
+export GEMINI_API_KEY=your_key_here
 python3 -c "from api.main import app; print('Imports OK')"
 ```
 
