@@ -1,0 +1,122 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.env
+.env.local
+.env.*.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Database files (keep structure, exclude data)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# ChromaDB vector databases
+.chroma_*/
+.chroma/
+chroma_db/
+
+# Large CSV data files
+ADV_Base_A_*.csv
+ADV_Base_B_*.csv
+*.csv
+
+# Processing results and logs
+*.log
+*.json
+!requirements.txt
+!package.json
+
+# Temporary files and caches
+tmp/
+temp/
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# Claude Code specific (not part of the system)
+.claude/
+CLAUDE.md
+
+# Classification and debug scripts (non-core)
+classify_*.py
+debug_*.py
+test_*.py
+verify_*.py
+reproduce_*.py
+analyze_*.py
+rebuild_*.py
+accelerated_*.py
+clean_*.py
+synthetic_*.py
+
+# Analysis and processing results
+*_analysis.json
+*_results.json
+dempster_analysis.json
+adv_processing_results.json
+
+# Script outputs and temporary analysis files
+start-server
+analyze
+
+# Documentation files (keep main README and CLAUDE.md but exclude others)
+ENHANCED_*.md
+LLM_*.md
+MATCHING_*.md
+SMB_*.md
+TOPK_*.md
+ADV_*.md
+README_*.md

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMB Research Agent</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus, input[type="url"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            flex-grow: 1;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        .error {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success {
+            background-color: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .results {
+            margin-top: 30px;
+        }
+        .company-card {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .company-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .info-section {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .info-title {
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        .metric {
+            margin: 8px 0;
+        }
+        .confidence {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .confidence.HIGH { background-color: #27ae60; color: white; }
+        .confidence.MEDIUM { background-color: #f39c12; color: white; }
+        .confidence.LOW { background-color: #e74c3c; color: white; }
+        .report-section {
+            margin-top: 20px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .tab.active {
+            border-bottom-color: #3498db;
+            color: #3498db;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .json-viewer {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 SMB Research Agent</h1>
+        <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">
+            AI-powered company analysis for private equity evaluation
+        </p>
+        
+        <div class="form-group">
+            <label for="websiteUrl">Company Website URL:</label>
+            <input type="url" id="websiteUrl" placeholder="https://example.com" value="https://www.freshbooks.com">
+        </div>
+        
+        <div class="form-group">
+            <label for="companyName">Company Name (Optional):</label>
+            <input type="text" id="companyName" placeholder="e.g., FreshBooks">
+        </div>
+        
+        <div class="button-group">
+            <button onclick="analyzeCompany('summary')">Quick Summary</button>
+            <button onclick="analyzeCompany('detailed')">Detailed Analysis</button>
+            <button onclick="analyzeCompany('detailed', true)">Detailed + Report</button>
+        </div>
+        
+        <div id="loading" class="loading" style="display: none;">
+            <p>🤖 Analyzing company... This may take up to 2 minutes.</p>
+            <div style="animation: spin 1s linear infinite; display: inline-block;">⚙️</div>
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="success" class="success" style="display: none;"></div>
+        
+        <div id="results" class="results" style="display: none;">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('overview')">Overview</div>
+                <div class="tab" onclick="showTab('details')">Details</div>
+                <div class="tab" onclick="showTab('report')">Report</div>
+                <div class="tab" onclick="showTab('raw')">Raw Data</div>
+            </div>
+            
+            <div id="overview-tab" class="tab-content active">
+                <div id="company-overview"></div>
+            </div>
+            
+            <div id="details-tab" class="tab-content">
+                <div id="company-details"></div>
+            </div>
+            
+            <div id="report-tab" class="tab-content">
+                <div id="formatted-report" class="report-section"></div>
+            </div>
+            
+            <div id="raw-tab" class="tab-content">
+                <div id="raw-data" class="json-viewer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAnalysis = null;
+
+        async function analyzeCompany(type, includeReport = false) {
+            const websiteUrl = document.getElementById('websiteUrl').value;
+            const companyName = document.getElementById('companyName').value;
+            
+            if (!websiteUrl) {
+                showError('Please enter a website URL');
+                return;
+            }
+            
+            showLoading(true);
+            hideError();
+            hideSuccess();
+            hideResults();
+            
+            try {
+                let endpoint, body;
+                
+                if (type === 'summary') {
+                    endpoint = '/analysis/summary';
+                    body = {
+                        website_url: websiteUrl,
+                        company_name: companyName || null
+                    };
+                } else {
+                    endpoint = '/analysis/detailed';
+                    body = {
+                        website_url: websiteUrl,
+                        company_name: companyName || null,
+                        include_report: includeReport,
+                        include_raw_data: true
+                    };
+                }
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentAnalysis = data;
+                    showResults(data, type);
+                    showSuccess(`Analysis completed successfully! ${type === 'summary' ? 'Summary' : 'Detailed'} analysis generated.`);
+                } else {
+                    showError(data.error || 'Analysis failed');
+                }
+                
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function showResults(data, type) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block';
+            
+            if (type === 'summary') {
+                showSummaryResults(data);
+            } else {
+                showDetailedResults(data);
+            }
+        }
+        
+        function showSummaryResults(data) {
+            const overview = document.getElementById('company-overview');
+            overview.innerHTML = `
+                <div class="company-card">
+                    <div class="company-name">${data.company_name || 'Unknown Company'}</div>
+                    <div class="company-info">
+                        <div class="info-section">
+                            <div class="info-title">Basic Info</div>
+                            <div class="metric"><strong>Industry:</strong> ${data.industry || 'Unknown'}</div>
+                            <div class="metric"><strong>Size:</strong> ${data.size_estimate || 'Unknown'}</div>
+                            <div class="metric"><strong>Revenue:</strong> ${data.revenue_estimate || 'Unknown'}</div>
+                        </div>
+                        <div class="info-section">
+                            <div class="info-title">Investment Profile</div>
+                            <div class="metric"><strong>Investment Score:</strong> ${data.investment_score ? data.investment_score.toFixed(1) : 'N/A'}/10</div>
+                            <div class="metric"><strong>Confidence:</strong> <span class="confidence ${data.confidence_level || 'MEDIUM'}">${data.confidence_level || 'MEDIUM'}</span></div>
+                            <div class="metric"><strong>Analysis Cost:</strong> $${data.analysis_cost ? data.analysis_cost.toFixed(4) : '0.0000'}</div>
+                        </div>
+                    </div>
+                    ${data.key_highlights && data.key_highlights.length > 0 ? `
+                    <div class="info-section" style="margin-top: 20px;">
+                        <div class="info-title">Key Highlights</div>
+                        ${data.key_highlights.map(highlight => `<div class="metric">• ${highlight}</div>`).join('')}
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Hide unused tabs for summary
+            document.querySelector('.tab:nth-child(2)').style.display = 'none';
+            document.querySelector('.tab:nth-child(3)').style.display = 'none';
+            document.querySelector('.tab:nth-child(4)').style.display = 'none';
+        }
+        
+        function showDetailedResults(data) {
+            // Show all tabs for detailed analysis
+            document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'block');
+            
+            // Overview tab
+            if (data.company_overview) {
+                const overview = document.getElementById('company-overview');
+                overview.innerHTML = `
+                    <div class="company-card">
+                        <div class="company-name">${data.company_overview.name}</div>
+                        <p style="color: #7f8c8d; margin-bottom: 20px;">${data.company_overview.description}</p>
+                        <div class="company-info">
+                            <div class="info-section">
+                                <div class="info-title">Company Details</div>
+                                <div class="metric"><strong>Industry:</strong> ${data.company_overview.industry}</div>
+                                <div class="metric"><strong>Website:</strong> <a href="${data.company_overview.website}" target="_blank">${data.company_overview.website}</a></div>
+                                <div class="metric"><strong>Headquarters:</strong> ${data.company_overview.headquarters}</div>
+                            </div>
+                            ${data.business_metrics ? `
+                            <div class="info-section">
+                                <div class="info-title">Business Metrics</div>
+                                <div class="metric"><strong>Employees:</strong> ${data.business_metrics.estimated_employees ? data.business_metrics.estimated_employees.toLocaleString() : 'Unknown'}</div>
+                                <div class="metric"><strong>Revenue:</strong> ${data.business_metrics.estimated_revenue ? '$' + data.business_metrics.estimated_revenue.toLocaleString() : 'Unknown'}</div>
+                                <div class="metric"><strong>Size:</strong> ${data.business_metrics.size_classification || 'Unknown'}</div>
+                                <div class="metric"><strong>Growth Stage:</strong> ${data.business_metrics.growth_stage || 'Unknown'}</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Details tab
+            if (data.investment_profile) {
+                const details = document.getElementById('company-details');
+                details.innerHTML = `
+                    <div class="company-info">
+                        ${data.investment_profile.competitive_advantages && data.investment_profile.competitive_advantages.length > 0 ? `
+                        <div class="info-section">
+                            <div class="info-title">Competitive Advantages</div>
+                            ${data.investment_profile.competitive_advantages.map(adv => `<div class="metric">• ${adv}</div>`).join('')}
+                        </div>
+                        ` : ''}
+                        ${data.investment_profile.scalability_factors && data.investment_profile.scalability_factors.length > 0 ? `
+                        <div class="info-section">
+                            <div class="info-title">Scalability Factors</div>
+                            ${data.investment_profile.scalability_factors.map(factor => `<div class="metric">• ${factor}</div>`).join('')}
+                        </div>
+                        ` : ''}
+                        ${data.investment_profile.growth_indicators && data.investment_profile.growth_indicators.length > 0 ? `
+                        <div class="info-section">
+                            <div class="info-title">Growth Indicators</div>
+                            ${data.investment_profile.growth_indicators.map(indicator => `<div class="metric">• ${indicator}</div>`).join('')}
+                        </div>
+                        ` : ''}
+                        ${data.confidence_scores ? `
+                        <div class="info-section">
+                            <div class="info-title">Confidence Scores</div>
+                            <div class="metric"><strong>Company ID:</strong> <span class="confidence ${data.confidence_scores.company_identification}">${data.confidence_scores.company_identification}</span></div>
+                            <div class="metric"><strong>Size Estimation:</strong> <span class="confidence ${data.confidence_scores.size_estimation}">${data.confidence_scores.size_estimation}</span></div>
+                            <div class="metric"><strong>Financial Data:</strong> <span class="confidence ${data.confidence_scores.financial_data}">${data.confidence_scores.financial_data}</span></div>
+                            <div class="metric"><strong>Market Position:</strong> <span class="confidence ${data.confidence_scores.market_position}">${data.confidence_scores.market_position}</span></div>
+                        </div>
+                        ` : ''}
+                        ${data.token_usage ? `
+                        <div class="info-section">
+                            <div class="info-title">Analysis Metadata</div>
+                            <div class="metric"><strong>Tokens Used:</strong> ${data.token_usage.total_tokens.toLocaleString()}</div>
+                            <div class="metric"><strong>Cost:</strong> $${data.token_usage.estimated_cost_usd.toFixed(4)}</div>
+                            <div class="metric"><strong>Execution Time:</strong> ${data.metadata ? data.metadata.execution_time_seconds.toFixed(2) : 'N/A'}s</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            // Report tab
+            if (data.formatted_report) {
+                document.getElementById('formatted-report').textContent = data.formatted_report;
+            } else {
+                document.getElementById('formatted-report').innerHTML = '<p style="color: #7f8c8d;">No formatted report available. Use "Detailed + Report" button to generate one.</p>';
+            }
+            
+            // Raw data tab
+            if (data.raw_data) {
+                document.getElementById('raw-data').textContent = JSON.stringify(data.raw_data, null, 2);
+            } else {
+                document.getElementById('raw-data').textContent = JSON.stringify(data, null, 2);
+            }
+        }
+        
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Hide all tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Activate selected tab button
+            event.target.classList.add('active');
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+        }
+        
+        function hideSuccess() {
+            document.getElementById('success').style.display = 'none';
+        }
+        
+        function hideResults() {
+            document.getElementById('results').style.display = 'none';
+        }
+        
+        // Add spinning animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
