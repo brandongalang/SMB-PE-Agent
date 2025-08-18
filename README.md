@@ -295,5 +295,3 @@ ls -la .chroma_*
 **Technical Learning:** Built to explore agentic AI applications in complex domains, demonstrating how AI-assisted development can rapidly create functional systems in unfamiliar territories.
 
 **Development Tools:** Created using Claude Code for AI-powered prototyping, showcasing modern approaches to building intelligent systems with integrated reasoning, search, and analysis capabilities.
-
-*For technical details and development patterns, see `CLAUDE.md`.*
