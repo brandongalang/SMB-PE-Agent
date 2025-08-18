@@ -1,16 +1,31 @@
-# SMB-PE Agent
+# PE-SMB Matcher: AI Investment Research Agent
 
-An intelligent AI agent system for analyzing small-to-medium businesses (SMBs) and matching them with relevant private equity (PE) funds. Built with Google Gemini 2.0 Flash and PydanticAI, the system provides comprehensive company analysis and intelligent fund matching through semantic search.
+**Technical demonstration of agentic AI systems for domain-specific workflows**
 
-## Features
+Built to showcase AI prototyping capabilities across multiple components: research agents, vector embeddings, RAG (Retrieval-Augmented Generation), and structured/unstructured data inference. Demonstrates building functional AI applications in domains outside direct expertise through intelligent system design.
 
-- **AI-Powered SMB Analysis**: Uses Google Gemini 2.0 Flash with PydanticAI for comprehensive company analysis
-- **LLM Investment Analysis**: Sophisticated investment attractiveness scoring and strategic recommendations
-- **Semantic PE Fund Matching**: ChromaDB vector search over both synthetic and real SEC Form ADV data
-- **CLI Interface**: Command-line tool with `./analyze` wrapper for quick company analysis
-- **REST API**: FastAPI-based backend with async support for programmatic access
-- **Confidence Scoring**: Multi-level confidence assessment for data reliability
-- **Cost Tracking**: Token usage and API cost monitoring for budget management
+*Developed using Claude Code for rapid AI prototyping and system integration.*
+
+## What This Demonstrates
+
+**Multi-Component AI Architecture:**
+- 🤖 **Research Agents** - PydanticAI-powered company analysis with Google Gemini 2.0
+- 🔍 **Semantic Search** - ChromaDB vector embeddings over 349K SEC Form ADV records  
+- 🧠 **RAG Pipeline** - Context-aware matching between SMBs and PE investment criteria
+- 📊 **Structured Data Inference** - LLM reasoning over fuzzy business intelligence
+- ⚡ **Production-Ready API** - FastAPI backend with async processing and CLI interface
+
+**Domain Adaptation Without Expertise:**
+- Investment analysis workflows learned through AI-assisted development
+- Real financial data integration (SEC Form ADV database)
+- Industry-specific scoring and matching algorithms
+- Professional-grade output formatting and confidence scoring
+
+**Technical Implementation:**
+- **Confidence Scoring** - Multi-level reliability assessment for AI-generated insights
+- **Cost Tracking** - Token usage monitoring and API budget management
+- **Error Handling** - Robust fallback mechanisms for production reliability
+- **Data Processing** - ETL pipelines for 349K+ financial records with semantic indexing
 
 ## Quick Start
 
@@ -23,17 +38,26 @@ An intelligent AI agent system for analyzing small-to-medium businesses (SMBs) a
 
 ```bash
 # Clone repository
-git clone https://github.com/brandongalang/SMB-PE-Agent.git
-cd SMB-PE-Agent
+git clone <repository-url>
+cd PE-SMB-Matcher-POC
 
-# Install dependencies
+# Quick demo setup (downloads data automatically)
+./setup-demo.sh
+
+# Add your Google API key to .env file
+# Get free key from: https://ai.google.dev/
+```
+
+**Alternative Manual Setup:**
+```bash
+# Install dependencies manually
 pip install -r requirements.txt
 cd api && pip install -r requirements.txt
 cd ../cli && pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
-# Add your GEMINI_API_KEY to .env
+# Add your GOOGLE_API_KEY to .env
 ```
 
 ### Usage
@@ -81,37 +105,41 @@ curl -X POST "http://localhost:8000/analysis/with-pe-matches?website_url=https:/
 curl http://localhost:8000/health
 ```
 
-## Architecture
+## Architecture Overview
 
-### Core Components
+### **Interactive System Flow Visualization**
+**[📊 View Interactive Data Flow Diagram](https://g.co/gemini/share/5263405a85d2)**
 
-**SMB Analysis Agent** (`api/agents/smb_agent.py`)
-- Built with PydanticAI framework
-- Uses Google Gemini 2.0 Flash with native search grounding
-- Provides structured SMBCompanyData output with confidence scoring
-- Comprehensive error handling and fallback mechanisms
+*Explore the complete PE-SMB Matcher workflow with this interactive Gemini Canvas visualization showing the two-sided analysis and matching process.*
 
-**Semantic Search Layer** (`pe_semantic_layer.py`, `pe_fund_matcher.py`)
-- ChromaDB vector database for semantic search
-- SQLite database with PE fund profiles
-- Intelligent company-to-fund matching algorithms
+**Agentic System Design:**
+```
+Website URL → Research Agent → Company Analysis → Semantic Matching → Investment Report
+     ↓              ↓                ↓                ↓                ↓
+  Web Scraping   AI Analysis    Vector Search    LLM Reasoning    Structured Output
+```
 
-**API Layer** (`api/`)
-- FastAPI with async support
-- Unified analysis endpoints with confidence scoring
-- Token usage tracking and cost estimation
+**Core AI Components:**
 
-**CLI Layer** (`cli/`)
-- Rich console interface with progress indicators
-- Flexible output formats (table, JSON)
-- File saving and batch processing support
+1. **Research Agent** (`api/agents/smb_agent.py`)
+   - PydanticAI framework with Google Gemini 2.0 Flash
+   - Web scraping → structured business intelligence extraction
+   - Confidence scoring and error handling for production reliability
 
-### Data Flow
+2. **Semantic Search Engine** (`enhanced_fund_matcher.py`)
+   - ChromaDB vector database over 349K SEC Form ADV records
+   - Multi-dimensional matching: sector, stage, geography, investment criteria
+   - Hybrid scoring: semantic similarity + structured data filters
 
-1. **Input**: Company website URL (+ optional company name hint)
-2. **Analysis**: SMB agent analyzes website using Google Search grounding
-3. **Matching**: Semantic search finds relevant PE funds from database
-4. **Output**: Structured results with confidence scores and cost tracking
+3. **LLM Reasoning Pipeline** (`llm_reasoning_engine.py`)
+   - Context-aware investment analysis using complete company profiles
+   - Strategic fit assessment and ranking of PE fund candidates
+   - Investment thesis generation with specific reasoning chains
+
+4. **Production API** (`api/`)
+   - FastAPI async backend with comprehensive error handling
+   - Token usage tracking and cost monitoring
+   - Rich CLI interface with progress indicators and multiple output formats
 
 ## API Endpoints
 
@@ -149,7 +177,7 @@ Comprehensive SMB analysis including:
 
 ### Environment Variables
 ```env
-GEMINI_API_KEY=your_gemini_api_key_here  # Required
+GOOGLE_API_KEY=your_gemini_api_key_here  # Required
 CHROMA_DB_PATH=.chroma_pe_funds         # Optional: ChromaDB storage location
 DATABASE_URL=sec_adv_synthetic.db       # Optional: SQLite database path
 ```
@@ -173,36 +201,44 @@ DATABASE_URL=sec_adv_synthetic.db       # Optional: SQLite database path
 - `pe_funds`: Vector embeddings of PE fund descriptions for semantic search
 - Persistent storage in `.chroma_pe_funds/` directory
 
-## Performance
+## Technical Performance
 
-- **Analysis Time**: 10-30 seconds for complex company analysis
-- **Concurrent Requests**: Async FastAPI supports multiple simultaneous analyses
-- **Cost Efficiency**: Token usage tracking helps monitor API costs
-- **Scalability**: ChromaDB vector search scales with database size
+**AI Agent Performance:**
+- **Analysis Time**: 10-30 seconds for complete company-to-PE matching pipeline
+- **Data Processing**: 349K+ financial records indexed with sub-second semantic search
+- **Concurrent Processing**: Async FastAPI backend supports multiple simultaneous analyses
+- **Cost Optimization**: Token usage tracking and intelligent caching for API efficiency
 
-## Development
+**Scalability Characteristics:**
+- **Vector Search**: ChromaDB scales to millions of documents with consistent performance
+- **Database Operations**: SQLite + SQLAlchemy handles complex financial data relationships
+- **Memory Efficiency**: Streaming processing for large datasets with bounded memory usage
 
-### Project Structure
+## Development & Implementation
+
+**Built with Claude Code** for rapid AI system prototyping and integration. Demonstrates professional-grade development practices for agentic AI applications.
+
+### System Architecture
 ```
-├── analyze                 # CLI wrapper script (recommended entry point)
-├── api/                    # FastAPI backend
-│   ├── agents/            # AI analysis agents (SMB agent)
-│   ├── models/            # Data models and schemas
-│   ├── routers/           # API route definitions
-│   └── main.py           # FastAPI application
-├── cli/                   # Command-line interface
-│   ├── main.py           # CLI entry point
-│   ├── llm_integration.py # LLM analysis pipeline
-│   └── formatters.py     # Output formatting
-├── pe_semantic_layer.py   # ChromaDB integration for synthetic data
-├── adv_semantic_layer.py  # ChromaDB integration for SEC Form ADV data
-├── enhanced_fund_matcher.py # Combined matching over multiple data sources
-├── pe_fund_matcher.py     # Matching algorithms
-├── data_models.py         # Shared data structures
-├── sec_adv_synthetic.db   # PE fund database (excluded from repo)
-├── adv_database.db       # SEC Form ADV database (~349K firms, excluded from repo)
-└── .env.example          # Environment configuration template
+├── analyze                 # CLI wrapper script (instant demo capability)
+├── setup-demo.sh          # Automated environment setup
+├── api/                   # Production FastAPI backend
+│   ├── agents/            # PydanticAI research agents
+│   ├── models/            # Structured data schemas
+│   └── routers/           # REST API endpoints
+├── cli/                   # Rich console interface
+├── enhanced_fund_matcher.py # Multi-source semantic matching
+├── llm_reasoning_engine.py  # Investment analysis pipeline
+├── adv_semantic_layer.py    # 349K SEC record processing
+├── sec_adv_synthetic.db     # Demo database (2K firms, 50 PE funds)
+└── CLAUDE.md               # AI-assisted development documentation
 ```
+
+**Key Implementation Highlights:**
+- **Rapid Prototyping**: Claude Code enabled building complex multi-agent system in days
+- **Domain Learning**: AI-assisted development in unfamiliar investment domain
+- **Production Quality**: Error handling, monitoring, and scalability from day one
+- **Data Integration**: Real financial datasets (SEC Form ADV) processed and indexed
 
 ### Testing
 ```bash
@@ -227,7 +263,7 @@ PYTHONPATH=. python3 cli/main.py https://example.com --no-llm-analysis
 **API Server Won't Start**
 ```bash
 export PYTHONPATH=.
-export GEMINI_API_KEY=your_key_here
+export GOOGLE_API_KEY=your_key_here
 python3 -c "from api.main import app; print('Imports OK')"
 ```
 
@@ -250,14 +286,14 @@ ls -la .chroma_*
 - Monitor token usage with cost tracking features
 - Use batch processing for multiple companies
 
-## License
+---
 
-[Add your license information here]
+## About This Project
 
-## Contributing
+**Portfolio Demonstration:** This project showcases advanced AI agent development capabilities, including multi-component system design, domain adaptation, and production-ready implementation practices.
 
-[Add contribution guidelines here]
+**Technical Learning:** Built to explore agentic AI applications in complex domains, demonstrating how AI-assisted development can rapidly create functional systems in unfamiliar territories.
 
-## Support
+**Development Tools:** Created using Claude Code for AI-powered prototyping, showcasing modern approaches to building intelligent systems with integrated reasoning, search, and analysis capabilities.
 
-For issues and feature requests, please check the documentation in `CLAUDE.md` or create an issue in the repository.
+*For technical details and development patterns, see `CLAUDE.md`.*

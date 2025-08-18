@@ -40,22 +40,23 @@ env/
 .DS_Store
 Thumbs.db
 
-# Database files (keep structure, exclude data)
-*.db
+# Database files (keep small synthetic DB, exclude large ones)
+adv_database.db
 *.db-shm
 *.db-wal
 *.sqlite
 *.sqlite3
+# Keep synthetic database for demo
+!sec_adv_synthetic.db
 
 # ChromaDB vector databases
 .chroma_*/
 .chroma/
 chroma_db/
 
-# Large CSV data files
+# Large CSV data files (exclude, will be downloaded by setup script)
 ADV_Base_A_*.csv
 ADV_Base_B_*.csv
-*.csv
 
 # Processing results and logs
 *.log
@@ -86,7 +87,7 @@ Thumbs.db
 # PyCharm
 .idea/
 
-# Claude Code specific (not part of the system)
+# Claude Code specific
 .claude/
 CLAUDE.md
 
@@ -108,15 +109,17 @@ synthetic_*.py
 dempster_analysis.json
 adv_processing_results.json
 
-# Script outputs and temporary analysis files
-start-server
-analyze
+# Keep executable scripts for demo
+#start-server
+#analyze
 
-# Documentation files (keep main README and CLAUDE.md but exclude others)
+# Documentation files (keep essential docs for demo)
+# Exclude detailed technical docs - main README and QUICK_START are sufficient
 ENHANCED_*.md
 LLM_*.md
 MATCHING_*.md
 SMB_*.md
 TOPK_*.md
 ADV_*.md
-README_*.md
+# Keep README_SIMPLE_USAGE.md as it's user-facing
+#README_*.md

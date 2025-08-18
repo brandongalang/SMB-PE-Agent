@@ -7,7 +7,7 @@ from chromadb.utils import embedding_functions
 from sqlalchemy import create_engine, MetaData, Table, select
 import logging
 
-from data_models import ProcessedCompanyData
+# from data_models import ProcessedCompanyData  # Archived - no longer used
 
 # Disable ChromaDB anonymous telemetry to avoid console noise
 os.environ.setdefault("CHROMA_TELEMETRY", "0")
@@ -123,7 +123,7 @@ class SemanticFirmSearcher:
         """Perform a semantic search and optionally enrich with LLM analysis.
 
         Returns list of dictionaries with keys: `score`, `db_row`, and (if
-        ``enrich`` is True) `llm_analysis` (instance of ProcessedCompanyData).
+        ``enrich`` is True) `llm_analysis_error` (LLM enrichment disabled).
         """
         results = self.collection.query(
             query_texts=[query],
@@ -159,14 +159,8 @@ class SemanticFirmSearcher:
                 output.append(item)
                 continue
 
-                try:
-                    import asyncio
-
-                    coro = self._research_agent.research_company(db_row["firm_name"])
-                    analysis: ProcessedCompanyData = asyncio.run(coro)
-                    item["llm_analysis"] = analysis
-                except Exception as exc:
-                    item["llm_analysis_error"] = str(exc)
+                # Legacy code - research agent functionality archived
+                pass
             output.append(item)
 
         return output
